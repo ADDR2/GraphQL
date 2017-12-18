@@ -4,11 +4,20 @@ import { graphql } from 'react-apollo';
 import { Link, hashHistory } from 'react-router';
 
 class LyricList extends Component {
-    onLike(id) {
+    onLike(id, likes) {
         const { mutate } = this.props;
 
-        mutate({ variables: { id } });
-        console.log(id);
+        mutate({
+            variables: { id },
+            optimisticResponse: {
+                __typename: 'Mutation',
+                likeLyric: {
+                    id,
+                    __typename: 'LyricType',
+                    likes: likes + 1
+                }
+            }
+        });
     }
 
     renderLyrics(){
@@ -21,7 +30,7 @@ class LyricList extends Component {
                     <div className="vote-box">
                         <i
                             className="material-icons"
-                            onClick={() => this.onLike(id)}
+                            onClick={() => this.onLike(id, likes)}
                         >
                             thumb_up
                         </i>
